@@ -1,0 +1,2 @@
+data_path: data/birthdays.csv
+connection_string: endpoint=https://communication-service-lva.communication.azure.com/;accesskey=TH5E5Gq9JdxaGa90BJ+H6XroxXSBSWExauYL/X82u8DI28AOTaPpjWW+ykESzoBzkMyufQyCsmqQBH192CkrHw==
