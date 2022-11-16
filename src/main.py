@@ -51,8 +51,9 @@ def get_email_body(df: pd.DataFrame) -> str:
 
 def send_email(
     connection_string: str, 
-    body: str, 
-    recipient: str="lars.van.asseldonk@hotmail.com"
+    body: str,
+    sender: str,
+    recipient: str="lars.van.asseldonk@hotmail.com",
 ) -> None:
     """Send an email to get notified of today's birthdays."""
 
@@ -68,7 +69,7 @@ def send_email(
     recipient = EmailRecipients(to=[address])
 
     message = EmailMessage(
-        sender="birthday-notifier@82354713-3e91-4c6c-9ec3-6b5aa56eb855.azurecomm.net",
+        sender=sender,
         content=content,
         recipients=recipient
     )
@@ -91,9 +92,9 @@ def main() -> None:
 
     # Send email
     send_email(
-        connection_string=config["connection_string"], 
+        connection_string=config["azure"]["connection_string"], 
         body=body,
-        recipient="micol_95@hotmail.it"
+        sender=config["azure"]["email_from"],
     )
 
 main()
