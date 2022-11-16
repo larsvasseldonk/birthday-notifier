@@ -3,10 +3,12 @@
 
 import pandas as pd
 import yaml
+import azure.functions as func
 
-from datetime import date
+from datetime import date, datetime
 
 from azure.communication.email import EmailClient, EmailContent, EmailAddress, EmailRecipients, EmailMessage
+
 
 def read_config(config_path) -> dict:
     with open(config_path, "r") as stream:
@@ -76,7 +78,7 @@ def send_email(
 
     response = email_client.send(message)
 
-def main() -> None:
+def main(dayTrigger: func.TimerRequest) -> None:
 
     # Load config
     config = read_config("config/config.yaml")
@@ -98,4 +100,5 @@ def main() -> None:
     )
 
 main()
+
 
