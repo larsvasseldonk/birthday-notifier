@@ -78,6 +78,7 @@ def send_email(
 
     response = email_client.send(message)
 
+
 def run_daily_trigger() -> None:
 
     # Load config
