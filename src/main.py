@@ -78,7 +78,8 @@ def send_email(
 
     response = email_client.send(message)
 
-def main(dayTrigger: func.TimerRequest) -> None:
+
+def run_daily_trigger() -> None:
 
     # Load config
     config = read_config("config/config.yaml")
