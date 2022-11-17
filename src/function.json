@@ -3,7 +3,7 @@
     "disabled": false,    
     "bindings": [
         {
-            "schedule": "0 30 9 * * *",
+            "schedule": "5 * * * * *",
             "name": "dayTrigger",
             "type": "timerTrigger",
             "direction": "in"
