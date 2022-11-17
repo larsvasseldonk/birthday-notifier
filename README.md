@@ -22,6 +22,7 @@ In Azure, we use the following naming conventions:
 - `ecsd`: email communication services domain
 - `ecs`: email communcation service
 - `ap`: application insights
+- `log`: log analytics space
 
 Each development resource is called: `<resource_abbre>-bdn-dev`. 
 
