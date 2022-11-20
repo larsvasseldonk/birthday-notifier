@@ -99,7 +99,3 @@ def run_daily_trigger() -> None:
         body=body,
         sender=config["azure"]["email_from"],
     )
-
-main()
-
-
