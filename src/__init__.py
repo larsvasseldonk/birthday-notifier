@@ -3,7 +3,7 @@ import datetime
 
 import azure.functions as func
 
-from src.main import run_daily_trigger
+from birthday_notifier.src.main import run_daily_trigger
 
 def main(dayTrigger: func.TimerRequest) -> None:
     utc_timestamp = datetime.datetime.now(datetime.timezone.utc).isoformat()
