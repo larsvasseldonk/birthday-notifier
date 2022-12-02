@@ -3,11 +3,11 @@
 
 import pandas as pd
 import yaml
-import azure.functions as func
-
-from datetime import date, datetime
+import logging
 
 from azure.communication.email import EmailClient, EmailContent, EmailAddress, EmailRecipients, EmailMessage
+
+logger = logging.getLogger(__name__)
 
 
 def read_config(config_path) -> dict:
@@ -16,10 +16,18 @@ def read_config(config_path) -> dict:
     
     return config
 
+
 def read_birthday_data(file_path: str) -> pd.DataFrame:
     """Read birthday data from file."""
 
-    return pd.read_csv(file_path, sep=";")
+    cols_dtype = {
+        "name": str,
+        "type": str,
+        "birthday": str,
+    }
+
+    return pd.read_csv(file_path, sep=";", dtype=cols_dtype)
+
 
 def parse_date_col(
     df: pd.DataFrame, 
@@ -34,21 +42,32 @@ def parse_date_col(
     
     return df
 
-def get_email_body(df: pd.DataFrame) -> str:
+
+def check_birthdays(df: pd.DataFrame, today: str) -> bool:
+    """Check if there are birthdays today to remember. """
+
+    birthdays = df["birthday"].dt.strftime("%d-%m")
+
+    if birthdays.str.contains(today).any():
+        is_birthday = True
+    else:
+        is_birthday = False
+
+    return is_birthday
+
+
+def get_email_body(df: pd.DataFrame, today: str) -> str:
     """Create the email body."""
 
-    today = pd.Timestamp(date.today())
-
-    body = "<p>Hi,</p><p>Todays birthdays are:</p><p><ul>"
+    body = "<p>Hi,</p><p>Today's birthdays are:</p><p><ul>"
     
     for _, row in df.iterrows():
-        if row["birthday"] == today:
+        if row["birthday"].strftime("%d-%m") == today:
             body += "<li>" + row["name"] + "</li>"
 
     body = body + "</ul></p><p>Don't forget to send a birthday message!</p>"
 
     return body
-
 
 
 def send_email(
@@ -63,7 +82,7 @@ def send_email(
     email_client = EmailClient.from_connection_string(connection_string)
 
     content = EmailContent(
-        subject="Todays birthdays",
+        subject="Today's birthdays",
         html=body,
     )
 
@@ -89,14 +108,25 @@ def run_daily_trigger() -> None:
         read_birthday_data(file_path=config["data_path"])
         .pipe(parse_date_col)
     )
-    
-    # Create body based on todays birthdays
-    body = get_email_body(df)
 
-    # Send email
-    send_email(
-        connection_string=config["azure"]["connection_string"], 
-        body=body,
-        sender=config["azure"]["email_from"],
-    )
+    today = pd.Timestamp.today(tz="CET").strftime("%d-%m")
 
+    if check_birthdays(df, today=today):
+
+        logger.info("Birthdays found. Send reminder email.")
+
+        # Create body based on todays birthdays
+        body = get_email_body(df, today=today)
+
+        print(body)
+
+        # Send reminder email
+        send_email(
+            connection_string=config["azure"]["connection_string"], 
+            body=body,
+            sender=config["azure"]["email_from"],
+        )
+    else:
+        logger.info("No birthdays found on", today)
+
+run_daily_trigger()
