@@ -6,8 +6,13 @@ import yaml
 import logging
 
 from azure.communication.email import EmailClient, EmailContent, EmailAddress, EmailRecipients, EmailMessage
+from opencensus.ext.azure.log_exporter import AzureLogHandler
 
 logger = logging.getLogger(__name__)
+logger.addHandler(AzureLogHandler(
+    connection_string="InstrumentationKey=cb0b5774-f68f-4abc-a255-c87b830fd0be"
+    )
+)
 
 
 def read_config(config_path) -> dict:
