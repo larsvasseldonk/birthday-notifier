@@ -132,4 +132,4 @@ def run_daily_trigger() -> None:
             sender=config["azure"]["email_from"],
         )
     else:
-        logger.info("No birthdays found on", today)
+        logger.info("No birthdays to remember on " + today)
