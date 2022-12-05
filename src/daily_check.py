@@ -133,5 +133,3 @@ def run_daily_trigger() -> None:
         )
     else:
         logger.info("No birthdays found on", today)
-
-run_daily_trigger()
